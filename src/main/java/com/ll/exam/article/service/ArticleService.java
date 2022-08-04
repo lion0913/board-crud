@@ -19,4 +19,8 @@ public class ArticleService {
     public ArticleDto findById(int id) {
         return articleRepository.findById(id);
     }
+
+    public long getArticlesCnt() {
+        return articleRepository.getArticlesCnt();
+    }
 }

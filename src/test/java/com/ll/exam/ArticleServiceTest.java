@@ -37,4 +37,13 @@ public class ArticleServiceTest {
         assertThat(articleDto.getModifiedDate()).isNotNull();
         assertThat(articleDto.isBlind()).isFalse();
     }
+
+    @Test
+    public void getArticlesCnt() {
+        ArticleService articleService = Container.getObj(ArticleService.class);
+
+        long articlesCount = articleService.getArticlesCnt();
+
+        assertThat(articlesCount).isEqualTo(3);
+    }
 }
