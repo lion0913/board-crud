@@ -68,6 +68,7 @@ public class ArticleRepository {
                 .append("SET title = ?", title)
                 .append(", body = ?", body)
                 .append(", isBlind = ?", isBlind)
+                .append(", modifiedDate = NOW()")
                 .append("WHERE id = %d".formatted(articleDto.getId()));
 
         articleDto.setTitle(title);
@@ -77,5 +78,14 @@ public class ArticleRepository {
         long affectedRowCount = sql.update();
 
         return affectedRowCount;
+    }
+
+    public void delete(long id) {
+        SecSql sql = myMap.genSecSql();
+        sql
+                .append("DELETE FROM article")
+                .append("WHERE id = ?", id);
+
+        sql.update();
     }
 }

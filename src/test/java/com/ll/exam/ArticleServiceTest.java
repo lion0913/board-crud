@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -16,9 +18,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ArticleServiceTest {
 
+    private ArticleService articleService;
+    private MyMap myMap;
+    private static final int TEST_DATA_SIZE = 30;
+
+    public ArticleServiceTest() {
+        myMap = Container.getObj(MyMap.class);
+        articleService = Container.getObj(ArticleService.class);
+    }
+
     @BeforeAll
     public void beforeAll() {
-        MyMap myMap = Container.getObj(MyMap.class);
         myMap.setDevMode(true);
     }
     // @BeforeEach를 붙인 아래 메서드는
@@ -34,12 +44,11 @@ public class ArticleServiceTest {
         // 게시물 3개를 만든다.
         // 테스트에 필요한 샘플데이터를 만든다고 보면 된다.
         makeArticleTestData();
+
     }
 
     private void makeArticleTestData() {
-        MyMap myMap = Container.getObj(MyMap.class);
-
-        IntStream.rangeClosed(1, 3).forEach(no -> {
+        IntStream.rangeClosed(1, TEST_DATA_SIZE).forEach(no -> {
             boolean isBlind = false;
             String title = "제목%d".formatted(no);
             String body = "내용%d".formatted(no);
@@ -63,23 +72,17 @@ public class ArticleServiceTest {
 
     @Test
     public void checkArticleService() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         assertThat(articleService).isNotNull();
     }
 
     @Test
     public void showList() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         List<ArticleDto> articleDtoList = articleService.getArticles();
-        assertThat(articleDtoList.size()).isEqualTo(3);
+        assertThat(articleDtoList.size()).isEqualTo(TEST_DATA_SIZE);
     }
 
     @Test
     public void findById() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         ArticleDto articleDto = articleService.findById(1);
 
         assertThat(articleDto.getId()).isEqualTo(1L);
@@ -92,26 +95,21 @@ public class ArticleServiceTest {
 
     @Test
     public void getArticlesCnt() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
 
         long articlesCount = articleService.getArticlesCnt();
 
-        assertThat(articlesCount).isEqualTo(3);
+        assertThat(articlesCount).isEqualTo(TEST_DATA_SIZE);
     }
 
     @Test
     public void write() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         long newArticleId = articleService.write("제목 new", "내용 new", false);
 
-        assertThat(newArticleId).isEqualTo(4);
+        assertThat(newArticleId).isEqualTo(TEST_DATA_SIZE + 1);
     }
 
     @Test
     public void modify() {
-        ArticleService articleService = Container.getObj(ArticleService.class);
-
         long affectedRow = articleService.modify(1,"제목 new", "내용 new", false);
 
         ArticleDto articleDto = articleService.findById(1);
@@ -122,5 +120,20 @@ public class ArticleServiceTest {
         assertThat(articleDto.getCreatedDate()).isNotNull();
         assertThat(articleDto.getModifiedDate()).isNotNull();
         assertThat(articleDto.isBlind()).isEqualTo(false);
+
+        // DB에서 받아온 게시물 수정날짜와 자바에서 계산한 현재 날짜를 비교하여(초단위)
+        // 그것이 1초 이하로 차이가 난다면
+        // 수정날짜가 갱신되었다 라고 볼 수 있음
+        long diffSeconds = ChronoUnit.SECONDS.between(articleDto.getModifiedDate(), LocalDateTime.now());
+        assertThat(diffSeconds).isLessThanOrEqualTo(1L);
+    }
+
+    @Test
+    public void delete() {
+        articleService.delete(1);
+
+        ArticleDto articleDto = articleService.findById(1);
+
+        assertThat(articleDto).isNull();
     }
 }
