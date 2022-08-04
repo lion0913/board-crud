@@ -27,6 +27,7 @@ public class ArticleServiceTest {
     @BeforeAll
     public void beforeAll() {
         myMap.setDevMode(true);
+
     }
     // @BeforeEach를 붙인 아래 메서드는
     // @Test가 달려있는 메서드가 실행되기 전에 자동으로 실행이 된다.
@@ -38,15 +39,16 @@ public class ArticleServiceTest {
         // 게시물 테이블을 깔끔하게 삭제한다.
         // DELETE FROM article; // 보다 TRUNCATE article; 로 삭제하는게 더 깔끔하고 흔적이 남지 않는다.
         truncateArticleTable();
+        makeArticleTestData();
         // 게시물 3개를 만든다.
         // 테스트에 필요한 샘플데이터를 만든다고 보면 된다.
-        makeArticleTestData();
+
 
     }
 
     private void makeArticleTestData() {
         IntStream.rangeClosed(1, TEST_DATA_SIZE).forEach(no -> {
-            boolean isBlind = false;
+            boolean isBlind = no >= 11 && no <= 20;;
             String title = "제목%d".formatted(no);
             String body = "내용%d".formatted(no);
 
@@ -150,5 +152,14 @@ public class ArticleServiceTest {
         ArticleDto beforeArticle = articleService.getNextArticle(id);
 
         assertThat(beforeArticle.getId()).isEqualTo(6);
+    }
+
+    @Test
+    @DisplayName("블라인드 글 스킵")
+    public void skipBlindArticle() {
+        int id = 10;
+        ArticleDto beforeArticle = articleService.getNextArticle(id);
+
+        assertThat(beforeArticle.getId()).isEqualTo(21);
     }
 }

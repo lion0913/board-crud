@@ -108,7 +108,7 @@ public class ArticleRepository {
                 .append("SELECT *")
                 .append("FROM article")
                 .append("where id > %d".formatted(id))
-                .append("and isBlind = false")
+                .append("and isBlind != 1")
                 .append("order by id")
                 .append("limit 1");
 
