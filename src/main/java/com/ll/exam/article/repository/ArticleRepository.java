@@ -40,4 +40,42 @@ public class ArticleRepository {
 
         return sql.selectLong();
     }
+
+    public long write(String title, String body, boolean isBlind) {
+        SecSql sql = myMap.genSecSql();
+        sql
+                .append("INSERT INTO article")
+                .append("SET createdDate = NOW()")
+                .append(", modifiedDate = NOW()")
+                .append(", title = ?", title)
+                .append(", body = ?", body)
+                .append(", isBlind = ?", isBlind);
+
+        return sql.insert();
+    }
+
+    public long modify(int id, String title, String body, boolean isBlind) {
+        ArticleDto articleDto = findById(id);
+
+        if(articleDto == null) {
+            return 0;
+        }
+
+        SecSql sql = myMap.genSecSql();
+
+        sql
+                .append("UPDATE article")
+                .append("SET title = ?", title)
+                .append(", body = ?", body)
+                .append(", isBlind = ?", isBlind)
+                .append("WHERE id = %d".formatted(articleDto.getId()));
+
+        articleDto.setTitle(title);
+        articleDto.setBody(body);
+        articleDto.setBlind(isBlind);
+
+        long affectedRowCount = sql.update();
+
+        return affectedRowCount;
+    }
 }
