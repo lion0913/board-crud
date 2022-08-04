@@ -3,10 +3,7 @@ package com.ll.exam;
 import com.ll.exam.article.dto.ArticleDto;
 import com.ll.exam.article.service.ArticleService;
 import com.ll.exam.mymap.MyMap;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -135,5 +132,23 @@ public class ArticleServiceTest {
         ArticleDto articleDto = articleService.findById(1);
 
         assertThat(articleDto).isNull();
+    }
+
+    @Test
+    @DisplayName("이전글")
+    public void getPrevData() {
+        int id = 5;
+        ArticleDto beforeArticle = articleService.getPrevArticle(id);
+
+        assertThat(beforeArticle.getId()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("다음글")
+    public void getAfterData() {
+        int id = 5;
+        ArticleDto beforeArticle = articleService.getNextArticle(id);
+
+        assertThat(beforeArticle.getId()).isEqualTo(6);
     }
 }

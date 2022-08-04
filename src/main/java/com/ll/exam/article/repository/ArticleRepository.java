@@ -88,4 +88,30 @@ public class ArticleRepository {
 
         sql.update();
     }
+
+    public ArticleDto getPrevArticle(int id) {
+        SecSql sql = myMap.genSecSql();
+        sql
+                .append("SELECT *")
+                .append("FROM article")
+                .append("where id < %d".formatted(id))
+                .append("and isBlind = false")
+                .append("order by id desc")
+                .append("limit 1");
+
+        return sql.selectRow(ArticleDto.class);
+    }
+
+    public ArticleDto getNextArticle(int id) {
+        SecSql sql = myMap.genSecSql();
+        sql
+                .append("SELECT *")
+                .append("FROM article")
+                .append("where id > %d".formatted(id))
+                .append("and isBlind = false")
+                .append("order by id")
+                .append("limit 1");
+
+        return sql.selectRow(ArticleDto.class);
+    }
 }
