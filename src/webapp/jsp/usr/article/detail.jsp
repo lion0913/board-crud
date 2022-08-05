@@ -26,20 +26,23 @@
                     </script>
                 </div>
             </div>
-            <c:if test="${prevArticle} != null">
+            <c:if test="${prevArticle != null}">
             <div class="mt-2">
                 <a href="/usr/article/detail/${prevArticle.id}">
                     이전글 : <span class="badge badge-primary">${prevArticle.id}</span> ${prevArticle.title} - ${prevArticle.createdDate}
                 </a>
             </div>
             </c:if>
-            <c:if test="${nextArticle} != null">
+            <c:if test="${nextArticle != null}">
             <div class="mt-2">
                 <a href="/usr/article/detail/${nextArticle.id}">
                     다음글 : <span class="badge badge-primary">${nextArticle.id}</span> ${nextArticle.title} - ${nextArticle.createdDate}
                 </a>
             </div>
             </c:if>
+            <div>
+
+            </div>
         </div>
     </div>
 </section>
