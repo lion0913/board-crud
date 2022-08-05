@@ -16,12 +16,16 @@ public class ArticleService {
         return articleRepository.getArticles();
     }
 
-    public ArticleDto findById(int id) {
-        return articleRepository.findById(id);
+    public ArticleDto findById(long id) {
+        return articleRepository.findById((int) id);
     }
 
     public long getArticlesCnt() {
         return articleRepository.getArticlesCnt();
+    }
+
+    public long write(String title, String body) {
+        return write(title, body, false);
     }
 
     public long write(String title, String body, boolean isBlind) {
