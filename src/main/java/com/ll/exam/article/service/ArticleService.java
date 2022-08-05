@@ -32,6 +32,9 @@ public class ArticleService {
         return articleRepository.write(title, body, isBlind);
     }
 
+    public void modify(int id, String title, String body) {
+        modify(id, title, body, false);
+    }
     public long modify(int id, String title, String body, boolean isBlind) {
         return articleRepository.modify(id, title, body, isBlind);
     }
@@ -47,4 +50,6 @@ public class ArticleService {
     public ArticleDto getNextArticle(int id) {
         return articleRepository.getNextArticle(id);
     }
+
+
 }
