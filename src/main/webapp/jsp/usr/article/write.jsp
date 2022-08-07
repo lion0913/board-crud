@@ -20,6 +20,8 @@
             return;
         }
 
+        console.log(form.body.value);
+        form.submit();
     }
 </script>
 
